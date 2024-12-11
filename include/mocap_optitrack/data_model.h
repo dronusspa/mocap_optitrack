@@ -72,6 +72,7 @@ struct RigidBody
   Pose pose;
   float meanMarkerError;
   bool isTrackingValid;
+  double trackTimestamp;
 
   bool hasValidData() const;
 };

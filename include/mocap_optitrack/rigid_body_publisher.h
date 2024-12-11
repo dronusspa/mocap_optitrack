@@ -58,6 +58,8 @@ private:
 
   Version coordinatesVersion;
 
+  double timeDifference; //For syncronizing optitrack clock to ROS clock
+
   tf::TransformBroadcaster tfPublisher;
   ros::Publisher posePublisher;
   ros::Publisher pose2dPublisher;

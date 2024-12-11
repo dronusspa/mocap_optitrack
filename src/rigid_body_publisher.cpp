@@ -141,8 +141,22 @@ void RigidBodyPublisher::publish(ros::Time const& time, RigidBody const& body)
   geometry_msgs::PoseStamped pose = utilities::getRosPose(body, coordinatesVersion);
   nav_msgs::Odometry odom =  utilities::getRosOdom(body, coordinatesVersion);
 
-  pose.header.stamp = time;
-  odom.header.stamp = time;
+  double curTimeDifference = (time.sec + time.nsec /1e9) - body.trackTimestamp;
+  // If timeDifference is 0 it has not yet been set
+  if (timeDifference == 0)
+  {
+    timeDifference = curTimeDifference;
+  }
+  // Clock sync can be improved if the current timeDifference is the lowest seen
+  if (curTimeDifference < timeDifference)
+  {
+    timeDifference = curTimeDifference;
+  }
+  // Calculate correct timestamp using time difference
+  double corStamp = body.trackTimestamp + timeDifference;
+  
+  pose.header.stamp = ros::Time((int)corStamp, (corStamp-floor(corStamp)) * 1000000000 );
+  odom.header.stamp = pose.header.stamp;
 
   if (config.publishPose)
   {
